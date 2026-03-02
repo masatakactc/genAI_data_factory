@@ -1,0 +1,6 @@
+fastapi==0.110.0
+uvicorn==0.29.0
+pydantic==2.6.4
+google-cloud-aiplatform==1.44.0
+weave==0.50.0
+tenacity==8.2.3
