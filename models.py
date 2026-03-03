@@ -2,14 +2,14 @@ from pydantic import BaseModel, Field
 from typing import Dict, Any, Optional
 
 class GenerationConfigBase(BaseModel):
-    model: str = "gemini-1.5-flash-002"
+    model: str = "gemini-2.5-flash"
     system_instruction: str
     temperature: float = 0.7
     response_mime_type: str = "application/json"
     response_schema: Dict[str, Any]
 
 class EvaluationConfigBase(BaseModel):
-    judge_model: str = "gemini-1.5-pro-002"
+    judge_model: str = "gemini-2.5-pro"
     criteria: str
     min_passing_score: int = 4
 

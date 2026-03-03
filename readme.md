@@ -25,6 +25,10 @@ export PROJECT_ID="YOUR_PROJECT_ID"
 # デフォルトプロジェクトとして設定
 gcloud config set project $PROJECT_ID
 
+gcloud auth login
+
+gcloud auth application-default login
+
 # 必要なAPIの有効化
 gcloud services enable \
   run.googleapis.com \

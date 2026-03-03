@@ -1,6 +1,9 @@
 fastapi==0.110.0
 uvicorn==0.29.0
 pydantic==2.6.4
-google-cloud-aiplatform==1.44.0
+google-cloud-aiplatform==1.64.0
 weave==0.50.0
+wandb==0.17.0
+numpy<2.0.0
+gql==3.4.1
 tenacity==8.2.3
