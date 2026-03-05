@@ -100,7 +100,7 @@ curl -s -X POST "${API_URL}/api/v1/templates" \
     "name": "テスト生成テンプレート",
     "description": "Vertex AIの疎通確認用",
     "generation_config": {
-      "model": "gemini-1.5-flash-002",
+      "model": "gemini-2.5-flash",
       "system_instruction": "あなたは挨拶botです。{{tone}}なトーンで挨拶を生成してください。",
       "temperature": 0.7,
       "response_mime_type": "application/json",
@@ -113,7 +113,7 @@ curl -s -X POST "${API_URL}/api/v1/templates" \
       }
     },
     "evaluation_config": {
-      "judge_model": "gemini-1.5-pro-002",
+      "judge_model": "gemini-2.5-pro",
       "criteria": "指定されたトーンで挨拶できているか（1〜5で評価）",
       "min_passing_score": 4
     }
