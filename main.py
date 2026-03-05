@@ -147,16 +147,39 @@ def cancel_job(job_id: str):
 # 3. データセット出力
 # ==========================================
 @app.get("/api/v1/datasets/{dataset_name}/export")
-def export_dataset(dataset_name: str, project_name: str, format: str = "jsonl", x_wandb_api_key: str = Header(None)):
-    if not x_wandb_api_key: raise HTTPException(status_code=401, detail="Missing W&B Key")
+def export_dataset(
+    dataset_name: str,
+    project_name: str,
+    format: str = "jsonl",
+    x_wandb_api_key: str = Header(None, description="User's W&B API Key")
+):
+    """Weaveに保存された高品質データをJSONLとしてダウンロードする"""
+    if not x_wandb_api_key:
+        raise HTTPException(status_code=401, detail="X-Wandb-Api-Key header is missing")
+    
+    # ユーザーのAPIキーでWeaveを初期化
     os.environ["WANDB_API_KEY"] = x_wandb_api_key
     weave.init(project_name)
+    
     try:
+        # Weaveからデータセットの最新バージョンを取得
         dataset = weave.ref(dataset_name).get()
+        rows = dataset.rows
+        
         if format == "jsonl":
+            # JSONL形式のストリーミングレスポンスを生成
             def iter_jsonl():
-                for row in dataset.rows: yield json.dumps(row, ensure_ascii=False) + "\n"
-            return StreamingResponse(iter_jsonl(), media_type="application/jsonlines", headers={"Content-Disposition": f"attachment; filename={dataset_name}.jsonl"})
-        return {"dataset_name": dataset_name, "count": len(dataset.rows), "data": dataset.rows}
+                for row in rows:
+                    yield json.dumps(row, ensure_ascii=False) + "\n"
+            
+            headers = {
+                "Content-Disposition": f"attachment; filename={dataset_name}.jsonl"
+            }
+            return StreamingResponse(iter_jsonl(), media_type="application/jsonlines", headers=headers)
+        
+        else:
+            # デフォルトは通常のJSON配列として返す
+            return {"dataset_name": dataset_name, "count": len(rows), "data": rows}
+            
     except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=f"Dataset not found or access denied. Error: {str(e)}")

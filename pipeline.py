@@ -79,7 +79,15 @@ def evaluate_sample(judge_model_name: str, criteria: str, sample_data: dict) -> 
 def run_generation_pipeline(job_id: str, template: dict, req: dict, wandb_api_key: str, jobs_db: dict):
     
     os.environ["WANDB_API_KEY"] = wandb_api_key
-    weave.init(req["project_name"])
+    raw_project_name = req["project_name"]
+    if "/" in raw_project_name:
+        # weave.init にはエンティティ名を渡さず、プロジェクト名だけを渡すのが仕様
+        weave_project_name = raw_project_name.split("/")[-1]
+    else:
+        weave_project_name = raw_project_name
+        
+    # 安全なプロジェクト名でWeaveを初期化
+    weave.init(weave_project_name)
     
     gen_config = template["generation_config"]
     eval_config = template["evaluation_config"]
